@@ -1,5 +1,5 @@
 import mongoose ,{Schema} from "mongoose";
-import bcrypt from "bcryptjs";
+import bcrypt  from "bcrypt";
 import jwt from "jsonwebtoken";
 
 const userSchema = new Schema({
@@ -57,7 +57,7 @@ userSchema.pre("save", async function(next){
      next();
 })
 userSchema.methods.isPasswordMatch = async function(password){
-    return await bcrypt.compare(password,this.password);
+    return await await bcrypt.compare(password,this.password);
 }
 userSchema.methods.generateAccessToken = function(){
     return jwt.sign({
@@ -75,4 +75,4 @@ userSchema.methods.refreshTokenAccessToken = function(){
 }
 
 
-export default User;
+export const User = mongoose.model("User", userSchema);

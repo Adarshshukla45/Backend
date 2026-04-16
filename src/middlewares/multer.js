@@ -3,7 +3,7 @@
 // It is written on top of busboy for maximum efficiency.
 
 
-
+import multer from "multer";
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
