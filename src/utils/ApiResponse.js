@@ -84,3 +84,6 @@ class ApiResponse{
 }
 
 export {ApiResponse}
+// is file ka matlab hai ki humne ek custom response class banaya hai jiska naam ApiResponse hai, 
+// jo ki hum apne application me API responses ko standardize karne ke liye use karenge. 
+// is class me humne statusCode, data, message aur success properties define ki hai, jise hum apne controllers me use karenge jab bhi hum response bhejenge.

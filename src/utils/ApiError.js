@@ -23,3 +23,6 @@ class ApiError extends Error {
   }
 }
 export  {ApiError};
+
+//is file ka matlab hai ki humne ek custom error class banaya hai jiska naam ApiError hai, 
+// jo ki JavaScript ke built-in Error class ko extend karta hai.
