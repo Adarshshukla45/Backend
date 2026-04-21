@@ -150,49 +150,48 @@ const logoutUser = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, null, "User logged out successfully"));
 });
 
-const refreshAccessToken = asyncHandler(async (req, res) => {
-  const incomingRefreshToken =
-    req.cookies.refreshToken || req.body.refreshToken;
-  //cookies ka matlab hai ki client side pe store hone wala token, aur body ka matlab hai ki agar client side pe token nahi hai to frontend se bheja gaya token
-  if (incomingRefreshToken) {
-    throw new ApiError("Refresh token is required", 400);
-  }
+const refreshAccessToken = asyncHandler(async(req,res) =>{
+       
+       const incomingRefreshToken=req.cookies.refreshToken || req.body.refreshToken
 
- try {
-   const decodedToken = jwt.verify(
-     incomingRefreshToken,
-     process.env.REFRESH_TOKEN_SECRET
-   );
- 
-   const user = await User.findById(decodedToken?._id);
- 
-   if (!user) {
-     throw new ApiError("User not found", 404);
-   }
- 
-   if (user?.refreshToken !== incomingRefreshToken) {
-     throw new ApiError("Invalid refresh token expeired", 401);
-   }
- 
- 
-   const options={
-     httpOnly:true,
-     secure:true,
-   }
-   const { accessToken, newrefreshToken } = await generateAccessTokenAndRefreshToken(user._id);
-   return res
-     .status(200)
-     .cookie("refreshToken", newrefreshToken, options)
-     .cookie("accessToken", accessToken, options)
-     .json(new ApiResponse(200, { accessToken }, "Access token refreshed successfully"));  
- 
- } catch (error) {
-    throw new ApiError("Invalid refresh token", 401);
- }
+       if(!incomingRefreshToken){
+        throw new ApiError(401,"unauthorized request")
+       }
 
+       try{
+         const decodedToken =jwt.verfiy(
+            incomingRefreshToken,
+            process.env.REFRESH_TOKEN_SECRET
+         )
 
+         const user =await User.findById(decodedToken?._id)
 
-});
+         if(!user){
+            throw new ApiError(401," invalid Refresh token")
+
+         }
+
+         if(incomingRefreshToken !== user?.refreshToken){
+            throw new ApiError(401,"Refresh token is expired or used ")
+         }
+
+         const { accessToken,newRefreshToken} = await generateAcessAndRefreshToken(user._id)
+
+         return res
+         .status(200)
+         .cookie("accessToken",accessToken,options)
+         .cookie("refreshToken",refreshToken,options)
+         .json(
+            new ApiResponse(
+                200,
+                {accessToken, refreshToken: newRefreshToken},
+                "Access token refreshed"
+            )
+         )
+       }catch(error){
+        throw new ApiError(401,error?.message || "Invaild refresh token")
+       }
+})
 
 export {
   registerUser,
